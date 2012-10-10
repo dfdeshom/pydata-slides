@@ -33,7 +33,7 @@ What This Talk Covers
 .. class:: incremental
 
    * indexing Wikipedia data on MongoDB and Solr
-   * indexing Wikipedia traffic data on MongoDB and Solr
+..  * indexing Wikipedia traffic data on MongoDB and Solr
    * using Wikipedia data and Solr for traditional NLP tasks 
 
 Indexing Wikipedia data 
@@ -48,16 +48,15 @@ http://en.wikipedia.org/wiki/Wikipedia:Database_download
 Link to latest XML dump of Wikipedia:
 http://download.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2
 
-Extracting pages from the XML dump
-----------------------------------
-
 The file is (predictably) huge, so use incremental parsing:
 http://effbot.org/zone/element-iterparse.htm
+
 
 Data peculiarities
 ----------------------------------
 
-Not Wikipedia pages are created equal. We are not interested in
+Not all Wikipedia pages are created equal. We are not interested in
+
 .. class:: incremental
 
    * redirect pages: page with no content that send the
@@ -74,7 +73,28 @@ Data to be extracted from a page
     * categories the page belongs to
     * page text
 
+Indexing to Solr
+--------------------------------
+.. class:: incremental
 
+    * we will index and store titles to the ``title`` field 
+    * we will index links to the multi-valued ``links`` field 
+    * we will index categories to the multi-valued ``categories`` field 
+    * we will index title and page text to the ``text`` field
+
+
+Fiding topics in text
+--------------------------------
+..
+
+Finding how close 2 search terms are
+-------------------------------------
+.. ngd
+
+
+Finding related articles 
+-----------------------------------
+Solr's ``MoreLikeThisSupport`` makes this easy.
 
 
 .. SS
