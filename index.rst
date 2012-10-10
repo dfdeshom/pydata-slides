@@ -83,8 +83,8 @@ Indexing to Solr
     * we will index title and page text to the ``text`` field
 
 
-Fiding topics in text
---------------------------------
+Fiding topics in documents using the corpus
+-------------------------------------------
 ..
 
 Finding how close 2 search terms are
