@@ -33,7 +33,7 @@ What This Talk Covers
 .. class:: incremental
 
    * indexing Wikipedia data on MongoDB and Solr
-..  * indexing Wikipedia traffic data on MongoDB and Solr
+   * indexing Wikipedia traffic data on MongoDB and Solr
    * using Wikipedia data and Solr for traditional NLP tasks 
 
 Indexing Wikipedia data 
@@ -85,7 +85,49 @@ Indexing to Solr
 
 Fiding topics in documents using the corpus
 -------------------------------------------
-..
+Brute-force algorithm::
+
+      for each sentence in text: 
+          query wikipedia corpus, retain say, top 10 results
+      out of these 10n results, select the most frequent ones
+
+Fiding topics in documents using the corpus (2)
+------------------------------------------------
+There are 2 ways to select the most frequent articles:
+
+    * taking the top ``y`` articles (top 5, 10)
+    * taking the top ``y%`` of articles (top 1%, 10% )
+
+(Show run Example and results)
+------------------------------------------------
+
+
+Analysis
+------------------------------------------------
+Drawbacks and work-arounds:
+    * The running time complexity depends on the number of
+      sentences in the candidate text and the number of results to be retained
+          
+    * We could submit 2 or more sentences at a time, which would cut
+      on the number of queries but provide slightly less accurate results
+
+(Show run Example?)
+------------------------------------------------
+Example
+
+Using Redirects for topic Aliasing
+-------------------------------------
+These pages are the same:
+    * ``Barack_Obama``
+    * ``Barack_Hussein_Obama`` (redirect)
+
+``Barack_Obama`` has over 30 redirects. This could be used to whittle
+down the number of topics extracted from a text.
+
+
+Indexing Wikipedia traffic data 
+----------------------------------
+Ex
 
 Finding how close 2 search terms are
 -------------------------------------
