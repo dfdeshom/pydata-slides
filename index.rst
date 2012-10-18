@@ -127,7 +127,116 @@ down the number of topics extracted from a text.
 
 Indexing Wikipedia traffic data 
 ----------------------------------
-Ex
+Contains page view statistics from Wikipedia pages accessed: http://dumps.wikimedia.org/other/pagecounts-raw/
+
+Useful for determining near-real-time trends on the web. 
+
+Updated every hour.
+
+Let's build a ``Trending Now`` page.
+
+Parsing traffic data 
+----------------------------------------
+
+Pages are stored in a predictable way, broken down by hour.
+
+Line format:
+   * project name 
+   * page title
+   * number of requests to page
+   * page size    
+
+Example entry: ``fr.b Special:Recherche/Achille_Baraguey_d%5C%27Hilliers 1 624``
+
+Saving traffic data 
+----------------------------------------
+We are not interested in every page, just pages that display Wikipedia
+articles (including redirects). we will exclude the following pages
+that start with these strings:
+
+.. sourcecode:: python
+
+    set(["Special:", "Wiktionary:", "Category:",
+         "Wikinews:", "Subject:","Mediawiki:",
+         "File:","Wikiversity:", "Topic:", "User_talk:",
+         "Appendix:","Wikibooks:","Wikijunior:",
+         "Portal:", "Data:", "Wikipedia:", "Wikiquote:",
+         ">","<","Wikt:","Wikisource:","Wikipedia_Talk:",
+         "Help:","]","[","Mediawiki_Talk:","Talk:","Image:",
+         "jquery","Main_Page","404_error","index.html",".css(",
+         "this.elem","User:","Template:"
+         ])
+
+We also exclude pages that have more than 1 slash (``/``) in them
+and pages that have very low page views (say, less than 5 views)
+
+What about redirects?
+----------------------------------------
+``Barack_Hussein_Obama`` and ``Barack_Obama`` will not have the same
+number of page hits, even though they will refer to the same page.
+
+The best solution to this is to sum up all the hits from redirect
+pages for a 'canonical' page. 
+
+Knowing when a traffic spike occurs 
+----------------------------------------
+We need to know the *total* number of page views occur for a period of
+time
+
+Wikipedia has this data stored in their project-level counts
+
+Can be found with traffic data, also broken down by hour.
+
+Line format: 
+    * Project name; generally indicates languages (en, fr, etc)
+    * total page views for period
+    * total bytes transfered for period 
+
+Example line ``en - 8758112 248450166157``
+
+Traffic spikes uses
+----------------------------------------
+
+With this, we can determine whether the traffic to a page has really
+spiked beyond some baseline (ie, weekend, vs Monday traffic)
+
+We can also determine which page has seen the most increase in page
+views *in percentage*. For example:
+
+    * page ``A`` normally has 100 view, but gets 200 views
+    * page ``B`` normally has 1000 views, but gets 1200 views
+
+The spike to page ``A`` is more interesting because the change in
+percentage is greater for it
+
+A traffic spike example (and validation)
+------------------------------------------
+Consider the presidential debate that took place on 2012/10/03. Most
+people think Romney "won" that debate. Could that be reflected in the
+number of pages accessed in Wikipedia?
+
+.. class:: incremental
+
+    * On 2012/10/03, ``Barack_Obama`` got around 100K views
+    * On 2012/10/04, ``Barack_Obama``  tripled to around 300K views
+    * On 2012/10/03, ``Mitt_Romney`` got around 150K views
+    * On 2012/10/04, ``Mitt_Romney``  quintupled to around 800K views
+
+Reflects both the public's renewed interest in both candidates and
+the consensus that Mitt Romney "won" that debate 
+
+A trending topics validation
+------------------------------------------
+
+
+What about redirects?
+----------------------------------------
+ Examples : 
+ ``http://174.143.145.74/wikistats/demand/Barack_Obama``
+
+ ``http://174.143.145.74/wikistats/demand/Barack``
+
+
 
 Finding how close 2 search terms are
 -------------------------------------
