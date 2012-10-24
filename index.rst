@@ -5,15 +5,14 @@ Wikipedia Indexing and Analysis
 ================================
 
 :Author:  Didier Deshommes
-:Date:    $Date: 2012-06-24 11:00:00 -0500 (Sun, 24 Jun 2012) $
+:Date:    $Date: 2012-10-26 11:00:00 -0500 $
 
 .. This document is copyright Didier Deshommes
 
 Meta Information
 ----------------
 
-**Me**: I've been using Python for a long time. I work at Parse.ly, a
-  tech startup in digital media space. We build web analytics systems  and APIs for publishers on the web.
+**Me**: I've been using Python for a long time. I work at Parse.ly, a tech startup in digital media space. We build web analytics systems  and APIs for publishers on the web.
 
 **E-mail me**: didier@parsely.com
 
@@ -32,11 +31,10 @@ What This Talk Covers
 ---------------------
 .. class:: incremental
 
-   * indexing Wikipedia data on MongoDB and Solr
-   * indexing Wikipedia traffic data on MongoDB and Solr
-   * using Wikipedia data and Solr for traditional NLP tasks 
+   * using Wikipedia data and Solr for NLP tasks
+   * using Wikipedia traffic data to to real-time trends
 
-Indexing Wikipedia data 
+Finding the data 
 -----------------------------
 
 The Wikimedia Foundation project hosts dumps from all its projects at
@@ -59,70 +57,241 @@ Not all Wikipedia pages are created equal. We are not interested in
 
 .. class:: incremental
 
-   * redirect pages: page with no content that send the
-     reader to another article
-   * special pages: pages whose title stats with ``Wikipedia:``
+   * special pages: pages whose title starts with ``Wikipedia:`` and
+     are generally of an administrative nature
+   * categories pages
    * stub pages: pages that do not exist yet
 
 
-Data to be extracted from a page
+Data peculiarities: categories
 --------------------------------
+Wikipedia's category system is rich, the problem with them is that
+they can be too specific or too broad for inferring topics. Barack Obama's
+categories include :
+
+.. class:: incremental
+
+     * ``Democratic Party United States Senators`` (too specific)
+     *  ``Current national leaders`` (too broad)
+
+
+Data peculiarities: links
+--------------------------------
+Links to other pages in a Wikipedia page indicate a relationship
+between them.
+  
+.. class:: incremental
+
+    * early inhabitants of *Haiti* (http://en.wikipedia.org/wiki/Haiti)      
+    * were *Taino* Indians  (http://en.wikipedia.org/wiki/Ta%C3%ADno_people) 
+    * who were speakers of the *Arawakan* language (http://en.wikipedia.org/wiki/Arawakan)
+
+
+Data to be extracted from a page
+-------------------------------------
 
     * page title
     * links in the page
     * categories the page belongs to
     * page text
+    * redirects this page may have
 
 Indexing to Solr
 --------------------------------
 .. class:: incremental
 
-    * we will index and store titles to the ``title`` field 
+    * we will index and store titles to the ``title`` field
     * we will index links to the multi-valued ``links`` field 
+    * we will index link anchors to the multi-valued ``link_texts`` field 
     * we will index categories to the multi-valued ``categories`` field 
     * we will index title and page text to the ``text`` field
+    * we will index redirects to the ``redirect`` field
+    * Example:
+      http://174.143.144.61:8983/solr/wikipedia/select?q=id%3AJaguar&fq=&start=0&rows=10&wt=json
+
+Disambiguation: Jaguar vs jaguar
+-----------------------------------
+Links and link anchors help contextualize what an article is
+talking about. 
+
+Example: an article talking is talking about jaguars. Is the
+article about the car or the animal?
+
+.. class:: incremental
+
+    * http://en.wikipedia.org/wiki/Jaguar has links to 'big cat',
+      'feline', several other animals, several countries, 'sexual
+      maturity', etc.
+    * http://en.wikipedia.org/wiki/Jaguar_Cars has links to 'Tata
+      Motors', several other car companies, etc
 
 
-Fiding topics in documents using the corpus
--------------------------------------------
+Disambiguation algorithm
+---------------------------
+From 'Topic Indexing with Wikipedia': http://www.aaai.org/Papers/Workshops/2008/WS-08-15/WS08-15-004.pdf
+
+Given an article T, we want to find some of its main topics.
+
+    * Extract all word ngrams
+    * compute **keyphraseness** of each ngram: ratio of number of
+      Wikipedia articles in which this ngram appears as a link and the
+      number of articles in which it appears 
+    * identify Wikipedia article corresponding to ngram
+       
+       * if it's a direct match, we are done
+       * if the match is a disambiguation page, disambiguate it
+
+Handling ambiguous terms
+---------------------------
+We use the direct, unambiguous ngrams that surround an ambigious ngram
+to disambiguate it. Each ambiguous ngram has several meanings, we
+will call them candidates. For each candidate: 
+
+.. class:: incremental
+
+    * compute its *similarity* to the other direct terms 
+    * compute its *commonness*: the overall popularity of the candidate
+      as an anchor
+    * Multiply both values to get an overall score for this candidate
+    * the candidate with the higest score is chosen 
+
+Formulas
+----------------------
+.. image:: sim.jpg
+
+.. image:: score.jpg
+
+Example
+--------------------------------
+"You would have to be a millionaire to be able to a sports car like a Jaguar"
+
+    * Ambiguous term is ``Jaguar``,
+    * ``millionaire`` and ``sports car`` are unambiguous
+
+
+Similarity score
+--------------------------------
+.. sourcecode:: python
+
+       wikipedia_similarity("Millionaire","Jaguar Cars") = 0.40296
+       wikipedia_similarity("Millionaire","Jaguar") = 0.4692
+
+       wikipedia_similarity("Sports car","Jaguar Cars") = 0.58767
+       wikipedia_similarity("Sports car","Jaguar") = 0.38630
+
+
+Commonnness
+--------------------------------
+Jaguar appears as a link anchor in Wikipedia around 930 times.  
+
+.. class:: incremental
+
+    * it links to Jaguar cars 466 times. Its commonness is around 0.5
+    * it links to the animal around 203 times. Its commonness is
+      around 0.2
+
+Scores
+--------------------------------
+.. class:: incremental
+
+    * Score for ``Jaguar Cars``: ((0.402 + 0.587)/2)* 0.5 = 0.2472
+    * Score for ``Jaguar``: ((0.4692 + 0.3863)/2)* 0.2 = 0.085
+    * So ``Jaguar`` is correctly disambiguated as ``Jaguar Cars``
+
+
+Avoiding disambiguation through brute force
+----------------------------------------------
 Brute-force algorithm::
 
       for each sentence in text: 
           query wikipedia corpus, retain say, top 10 results
       out of these 10n results, select the most frequent ones
 
-Fiding topics in documents using the corpus (2)
-------------------------------------------------
-There are 2 ways to select the most frequent articles:
+Avoiding disambiguation through brute force(2)
+---------------------------------------------------
+2 ways to select the most frequent articles:
 
     * taking the top ``y`` articles (top 5, 10)
     * taking the top ``y%`` of articles (top 1%, 10% )
 
-(Show run Example and results)
+Some examples
 ------------------------------------------------
+Top pages for http://techcrunch.com/2011/08/25/yipits-daily-deal-report-groupon-up-livingsocial-down-travel-deals-take-off/
+
+.. class:: incremental
+
+      * Group buying,
+      * Groupon,
+      * Andrew Mason (businessman),
+      * Groupon MyCityDeal,
+      * LivingSocial
+ 
+Some examples (2)
+---------------------
+Top pages for http://gawker.com/5831538/we-dont-need-no-stinkin-apple-store?tag=apple
+
+.. class:: incremental
+
+       * Criticism of Apple Inc.
+       * Apple Inc.
+       * Apple Corps v Apple Computer
+       * More examples here: http://pastie.org/private/tnayfwf51zwxxfxbrujjw
 
 
-Analysis
-------------------------------------------------
 Drawbacks and work-arounds:
+------------------------------------------------
     * The running time complexity depends on the number of
       sentences in the candidate text and the number of results to be retained
           
     * We could submit 2 or more sentences at a time, which would cut
       on the number of queries but provide slightly less accurate results
+    
+    * In some cases, top topics identified have nothing to do with the
+      article
 
-(Show run Example?)
+Using Solr's MoreLikeThis feature
 ------------------------------------------------
-Example
+Constructs a Lucene query based on terms within a document
 
-Using Redirects for topic Aliasing
--------------------------------------
-These pages are the same:
-    * ``Barack_Obama``
-    * ``Barack_Hussein_Obama`` (redirect)
+.. class:: incremental
 
-``Barack_Obama`` has over 30 redirects. This could be used to whittle
-down the number of topics extracted from a text.
+    * Very similar to the previous algorithm
+    * Have to somehow be "lucky", all results depend on results from
+      the first match
+
+Example of MLT in action
+------------------------------------------------
+Top topics for 'Haiti Challenges UN for Cholera Pandemic' : http://www.plenglish.com/index.php?option=com_content&task=view&id=644001&Itemid=1
+
+.. class:: incremental
+   
+    * United Nations Stabilisation Mission in Haiti
+    * Stabilisation Unit
+    * Evangelical Baptist Mission of South Haiti
+        
+
+Related pages/topics
+-------------------------
+Pages that link to each other are related, but we can quantify how
+closely they are related?
+
+.. class:: incremental
+
+   * ``Barack Obama`` page links to ``United States of America`` and
+     ``Patient Protection and Affordable Care Act``
+   * But ``United States of America`` has more pages linking to it
+     because it's such a general term
+   * So ``Patient Protection and Affordable Care Act`` is more closely
+     related to ``Barack Obama``
+
+
+Recap
+----------------
+.. class:: incremental
+
+   * Wikipedia's data is a treasure trove of good data
+   * Solr can be used to do some 'traditional' NLP tasks like entity
+     recognition, finding an article's main topics
 
 
 Indexing Wikipedia traffic data 
@@ -133,7 +302,6 @@ Useful for determining near-real-time trends on the web.
 
 Updated every hour.
 
-Let's build a ``Trending Now`` page.
 
 Parsing traffic data 
 ----------------------------------------
@@ -171,12 +339,23 @@ We also exclude pages that have more than 1 slash (``/``) in them
 and pages that have very low page views (say, less than 5 views)
 
 What about redirects?
+-------------------------------------
+Redirects are pages that redirect to a 'canonical' page.
+
+These pages are the same:
+    * ``Barack_Obama``
+    * ``Barack_Hussein_Obama`` (redirect)
+
+Barack Obama canonical page: http://174.143.145.74/wikistats/demand/Barack_Obama
+One of Barack Obama's redirect pages  http://174.143.145.74/wikistats/demand/Barack
+
+What about redirects? (2)
 ----------------------------------------
 ``Barack_Hussein_Obama`` and ``Barack_Obama`` will not have the same
 number of page hits, even though they will refer to the same page.
 
 The best solution to this is to sum up all the hits from redirect
-pages for a 'canonical' page. 
+pages for a canonical page. 
 
 Knowing when a traffic spike occurs 
 ----------------------------------------
@@ -192,7 +371,7 @@ Line format:
     * total page views for period
     * total bytes transfered for period 
 
-Example line ``en - 8758112 248450166157``
+Example line: ``en - 8758112 248450166157``
 
 Traffic spikes uses
 ----------------------------------------
@@ -221,31 +400,22 @@ number of pages accessed in Wikipedia?
     * On 2012/10/04, ``Barack_Obama``  tripled to around 300K views
     * On 2012/10/03, ``Mitt_Romney`` got around 150K views
     * On 2012/10/04, ``Mitt_Romney``  quintupled to around 800K views
+    * Reflects both the public's renewed interest in both candidates and
+      the consensus that Mitt Romney "won" that debate 
 
-Reflects both the public's renewed interest in both candidates and
-the consensus that Mitt Romney "won" that debate 
+Wikipedia efforts
+---------------------
+The Wikimedia Foundation itself has started building analytics tools
+for viewing this information at
+http://www.mediawiki.org/wiki/Analytics
 
-A trending topics validation
-------------------------------------------
+Contains:
+.. class:: incremental
 
-
-What about redirects?
-----------------------------------------
- Examples : 
- ``http://174.143.145.74/wikistats/demand/Barack_Obama``
-
- ``http://174.143.145.74/wikistats/demand/Barack``
-
-
-
-Finding how close 2 search terms are
--------------------------------------
-.. ngd
-
-
-Finding related articles 
------------------------------------
-Solr's ``MoreLikeThisSupport`` makes this easy.
+    * a framework for processing data called Kraken:
+      http://www.mediawiki.org/wiki/Analytics/Kraken
+    * a GUI toolking for doing custom visualizations, Limn:
+      http://www.mediawiki.org/wiki/Analytics/Limn
 
 
 .. SS
