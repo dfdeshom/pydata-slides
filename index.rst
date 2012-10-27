@@ -12,9 +12,17 @@ Wikipedia Indexing and Analysis
 Meta Information
 ----------------
 
-**Me**: I've been using Python for a long time. I work at Parse.ly, a tech startup in digital media space. We build web analytics systems  and APIs for publishers on the web.
+**Me**: Long-time Python user. Work at Parse.ly, a web analytics
+  company for publishers. Early contributor to SAGE, Cython.
 
 **E-mail me**: didier@parsely.com
+
+What This Talk Covers
+---------------------
+.. class:: incremental
+
+   * using Wikipedia data and Solr for NLP tasks
+   * using Wikipedia traffic data to search for real-time trends
 
 Why Wikipedia?
 ----------------
@@ -26,13 +34,6 @@ Wikipedia as a data source is very attractive:
    * the number of topics covered is broad
    * the Wikimedia Foundation ensures this data is free and publicly
      accessible to everyone
-
-What This Talk Covers
----------------------
-.. class:: incremental
-
-   * using Wikipedia data and Solr for NLP tasks
-   * using Wikipedia traffic data to to real-time trends
 
 Finding the data 
 -----------------------------
@@ -63,7 +64,7 @@ Not all Wikipedia pages are created equal. We are not interested in
    * stub pages: pages that do not exist yet
 
 
-Data peculiarities: categories
+Data features: categories
 --------------------------------
 Wikipedia's category system is rich, the problem with them is that
 they can be too specific or too broad for inferring topics. Barack Obama's
@@ -75,7 +76,7 @@ categories include :
      *  ``Current national leaders`` (too broad)
 
 
-Data peculiarities: links
+Data features: links
 --------------------------------
 Links to other pages in a Wikipedia page indicate a relationship
 between them.
@@ -96,6 +97,19 @@ Data to be extracted from a page
     * page text
     * redirects this page may have
 
+What are redirects?
+-------------------------------------
+Redirects are pages that redirect to a 'canonical' page.
+
+These pages are the same:
+    * ``Barack_Obama``
+    * ``Barack_Hussein_Obama`` (redirect)
+
+`Barack Obama canonical page <http://174.143.145.74/wikistats/demand/Barack_Obama>`_
+
+
+`One of Barack Obama's redirect pages  <http://174.143.145.74/wikistats/demand/Barack>`_
+
 Indexing to Solr
 --------------------------------
 .. class:: incremental
@@ -106,14 +120,13 @@ Indexing to Solr
     * we will index categories to the multi-valued ``categories`` field 
     * we will index title and page text to the ``text`` field
     * we will index redirects to the ``redirect`` field
-    * Example:
-      http://174.143.144.61:8983/solr/wikipedia/select?q=id%3AJaguar&fq=&start=0&rows=10&wt=json
+    * `Example document <http://174.143.144.61:8983/solr/wikipedia/select?q=id%3AJaguar&fq=&start=0&rows=10&wt=json>`_
+
+Using Solr and Wikipedia 
+--------------------------------
 
 Disambiguation: Jaguar vs jaguar
 -----------------------------------
-Links and link anchors help contextualize what an article is
-talking about. 
-
 Example: an article talking is talking about jaguars. Is the
 article about the car or the animal?
 
@@ -128,7 +141,7 @@ article about the car or the animal?
 
 Disambiguation algorithm
 ---------------------------
-From 'Topic Indexing with Wikipedia': http://www.aaai.org/Papers/Workshops/2008/WS-08-15/WS08-15-004.pdf
+From `Topic Indexing with Wikipedia <http://www.aaai.org/Papers/Workshops/2008/WS-08-15/WS08-15-004.pdf>`_
 
 Given an article T, we want to find some of its main topics.
 
@@ -163,7 +176,7 @@ Formulas
 
 Example
 --------------------------------
-"You would have to be a millionaire to be able to a sports car like a Jaguar"
+"You would have to be a millionaire to be able to buy a sports car like a Jaguar"
 
     * Ambiguous term is ``Jaguar``,
     * ``millionaire`` and ``sports car`` are unambiguous
@@ -209,14 +222,14 @@ Brute-force algorithm::
 
 Avoiding disambiguation through brute force(2)
 ---------------------------------------------------
-2 ways to select the most frequent articles:
+2 ways to select the most frequent results/articles:
 
     * taking the top ``y`` articles (top 5, 10)
     * taking the top ``y%`` of articles (top 1%, 10% )
 
 Some examples
 ------------------------------------------------
-Top pages for http://techcrunch.com/2011/08/25/yipits-daily-deal-report-groupon-up-livingsocial-down-travel-deals-take-off/
+Top pages/topics for `Yipit’s Daily Deal Report: Industry Revenue Dips, Groupon Gains Share, And Travel Deals Take Off <http://techcrunch.com/2011/08/25/yipits-daily-deal-report-groupon-up-livingsocial-down-travel-deals-take-off/>`_
 
 .. class:: incremental
 
@@ -228,14 +241,14 @@ Top pages for http://techcrunch.com/2011/08/25/yipits-daily-deal-report-groupon-
  
 Some examples (2)
 ---------------------
-Top pages for http://gawker.com/5831538/we-dont-need-no-stinkin-apple-store?tag=apple
+Top pages for `We Don’t Need No Stinkin’ Apple Store <http://gawker.com/5831538/we-dont-need-no-stinkin-apple-store>`_
 
 .. class:: incremental
 
        * Criticism of Apple Inc.
        * Apple Inc.
        * Apple Corps v Apple Computer
-       * More examples here: http://pastie.org/private/tnayfwf51zwxxfxbrujjw
+       * More examples `here <http://pastie.org/private/tnayfwf51zwxxfxbrujjw>`_
 
 
 Drawbacks and work-arounds:
@@ -261,7 +274,7 @@ Constructs a Lucene query based on terms within a document
 
 Example of MLT in action
 ------------------------------------------------
-Top topics for 'Haiti Challenges UN for Cholera Pandemic' : http://www.plenglish.com/index.php?option=com_content&task=view&id=644001&Itemid=1
+Top topics for `Haiti Challenges UN for Cholera Pandemic  <http://www.plenglish.com/index.php?option=com_content&task=view&id=644001&Itemid=1>`_
 
 .. class:: incremental
    
@@ -294,11 +307,15 @@ Recap
      recognition, finding an article's main topics
 
 
+Wikipedia traffic data
+----------------------------------
+
+
 Indexing Wikipedia traffic data 
 ----------------------------------
 Contains page view statistics from Wikipedia pages accessed: http://dumps.wikimedia.org/other/pagecounts-raw/
 
-Useful for determining near-real-time trends on the web. 
+Useful for determining real-time trends on the web. 
 
 Updated every hour.
 
@@ -338,18 +355,8 @@ that start with these strings:
 We also exclude pages that have more than 1 slash (``/``) in them
 and pages that have very low page views (say, less than 5 views)
 
+
 What about redirects?
--------------------------------------
-Redirects are pages that redirect to a 'canonical' page.
-
-These pages are the same:
-    * ``Barack_Obama``
-    * ``Barack_Hussein_Obama`` (redirect)
-
-Barack Obama canonical page: http://174.143.145.74/wikistats/demand/Barack_Obama
-One of Barack Obama's redirect pages  http://174.143.145.74/wikistats/demand/Barack
-
-What about redirects? (2)
 ----------------------------------------
 ``Barack_Hussein_Obama`` and ``Barack_Obama`` will not have the same
 number of page hits, even though they will refer to the same page.
@@ -410,6 +417,7 @@ for viewing this information at
 http://www.mediawiki.org/wiki/Analytics
 
 Contains:
+
 .. class:: incremental
 
     * a framework for processing data called Kraken:
@@ -417,17 +425,16 @@ Contains:
     * a GUI toolking for doing custom visualizations, Limn:
       http://www.mediawiki.org/wiki/Analytics/Limn
 
+Recap
+-----------------------------
+.. class:: incremental
 
-.. SS
-.. ---------------------
+   * Wikipedia's data is a treasure trove of good data
+   * Solr can be used to do some 'traditional' NLP tasks like entity
+     recognition, finding an article's main topics
+   * Wikipedia traffic data can be used to determine real-time trends
+      on the web
+      
+      
 
-.. .. sourcecode:: python
-
-..     >>> nums = [45, 23, 51, 32, 5]
-..     >>> for idx, num in enumerate(nums):
-..     ...    print idx, num
-..     0 45
-..     1 23
-..     2 51
-..     3 32
-..     4 5
+.. wkistats.co

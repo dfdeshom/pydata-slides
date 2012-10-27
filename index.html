@@ -1,0 +1,563 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.9.1: http://docutils.sourceforge.net/" />
+<meta name="version" content="S5 1.1" />
+<title>Wikipedia Indexing and Analysis</title>
+<meta name="author" content="Didier Deshommes" />
+<meta name="date" content="2012-10-26" />
+<style type="text/css">
+
+.highlight .hll { background-color: #333333 }
+.highlight  { background: #111111; color: #ffffff }
+.highlight .c { color: #008800; font-style: italic; background-color: #0f140f } /* Comment */
+.highlight .err { color: #ffffff } /* Error */
+.highlight .g { color: #ffffff } /* Generic */
+.highlight .k { color: #fb660a; font-weight: bold } /* Keyword */
+.highlight .l { color: #ffffff } /* Literal */
+.highlight .n { color: #ffffff } /* Name */
+.highlight .o { color: #ffffff } /* Operator */
+.highlight .x { color: #ffffff } /* Other */
+.highlight .p { color: #ffffff } /* Punctuation */
+.highlight .cm { color: #008800; font-style: italic; background-color: #0f140f } /* Comment.Multiline */
+.highlight .cp { color: #ff0007; font-weight: bold; font-style: italic; background-color: #0f140f } /* Comment.Preproc */
+.highlight .c1 { color: #008800; font-style: italic; background-color: #0f140f } /* Comment.Single */
+.highlight .cs { color: #008800; font-style: italic; background-color: #0f140f } /* Comment.Special */
+.highlight .gd { color: #ffffff } /* Generic.Deleted */
+.highlight .ge { color: #ffffff } /* Generic.Emph */
+.highlight .gr { color: #ffffff } /* Generic.Error */
+.highlight .gh { color: #ffffff; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #ffffff } /* Generic.Inserted */
+.highlight .go { color: #444444; background-color: #222222 } /* Generic.Output */
+.highlight .gp { color: #ffffff } /* Generic.Prompt */
+.highlight .gs { color: #ffffff } /* Generic.Strong */
+.highlight .gu { color: #ffffff; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #ffffff } /* Generic.Traceback */
+.highlight .kc { color: #fb660a; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #fb660a; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #fb660a; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #fb660a } /* Keyword.Pseudo */
+.highlight .kr { color: #fb660a; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #cdcaa9; font-weight: bold } /* Keyword.Type */
+.highlight .ld { color: #ffffff } /* Literal.Date */
+.highlight .m { color: #0086f7; font-weight: bold } /* Literal.Number */
+.highlight .s { color: #0086d2 } /* Literal.String */
+.highlight .na { color: #ff0086; font-weight: bold } /* Name.Attribute */
+.highlight .nb { color: #ffffff } /* Name.Builtin */
+.highlight .nc { color: #ffffff } /* Name.Class */
+.highlight .no { color: #0086d2 } /* Name.Constant */
+.highlight .nd { color: #ffffff } /* Name.Decorator */
+.highlight .ni { color: #ffffff } /* Name.Entity */
+.highlight .ne { color: #ffffff } /* Name.Exception */
+.highlight .nf { color: #ff0086; font-weight: bold } /* Name.Function */
+.highlight .nl { color: #ffffff } /* Name.Label */
+.highlight .nn { color: #ffffff } /* Name.Namespace */
+.highlight .nx { color: #ffffff } /* Name.Other */
+.highlight .py { color: #ffffff } /* Name.Property */
+.highlight .nt { color: #fb660a; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #fb660a } /* Name.Variable */
+.highlight .ow { color: #ffffff } /* Operator.Word */
+.highlight .w { color: #888888 } /* Text.Whitespace */
+.highlight .mf { color: #0086f7; font-weight: bold } /* Literal.Number.Float */
+.highlight .mh { color: #0086f7; font-weight: bold } /* Literal.Number.Hex */
+.highlight .mi { color: #0086f7; font-weight: bold } /* Literal.Number.Integer */
+.highlight .mo { color: #0086f7; font-weight: bold } /* Literal.Number.Oct */
+.highlight .sb { color: #0086d2 } /* Literal.String.Backtick */
+.highlight .sc { color: #0086d2 } /* Literal.String.Char */
+.highlight .sd { color: #0086d2 } /* Literal.String.Doc */
+.highlight .s2 { color: #0086d2 } /* Literal.String.Double */
+.highlight .se { color: #0086d2 } /* Literal.String.Escape */
+.highlight .sh { color: #0086d2 } /* Literal.String.Heredoc */
+.highlight .si { color: #0086d2 } /* Literal.String.Interpol */
+.highlight .sx { color: #0086d2 } /* Literal.String.Other */
+.highlight .sr { color: #0086d2 } /* Literal.String.Regex */
+.highlight .s1 { color: #0086d2 } /* Literal.String.Single */
+.highlight .ss { color: #0086d2 } /* Literal.String.Symbol */
+.highlight .bp { color: #ffffff } /* Name.Builtin.Pseudo */
+.highlight .vc { color: #fb660a } /* Name.Variable.Class */
+.highlight .vg { color: #fb660a } /* Name.Variable.Global */
+.highlight .vi { color: #fb660a } /* Name.Variable.Instance */
+.highlight .il { color: #0086f7; font-weight: bold } /* Literal.Number.Integer.Long */
+
+</style>
+<!-- configuration parameters -->
+<meta name="defaultView" content="slideshow" />
+<meta name="controlVis" content="hidden" />
+<!-- style sheet links -->
+<script src="ui/small-black/slides.js" type="text/javascript"></script>
+<link rel="stylesheet" href="ui/small-black/slides.css"
+      type="text/css" media="projection" id="slideProj" />
+<link rel="stylesheet" href="ui/small-black/outline.css"
+      type="text/css" media="screen" id="outlineStyle" />
+<link rel="stylesheet" href="ui/small-black/print.css"
+      type="text/css" media="print" id="slidePrint" />
+<link rel="stylesheet" href="ui/small-black/opera.css"
+      type="text/css" media="projection" id="operaFix" />
+
+<style type="text/css">
+#currentSlide {display: none;}
+</style>
+</head>
+<body>
+<div class="layout">
+<div id="controls"></div>
+<div id="currentSlide"></div>
+<div id="header">
+
+</div>
+<div id="footer">
+<h1>Wikipedia Indexing and Analysis</h1>
+
+</div>
+</div>
+<div class="presentation">
+<div class="slide" id="slide0">
+<h1 class="title">Wikipedia Indexing and Analysis</h1>
+<table class="docinfo" frame="void" rules="none">
+<col class="docinfo-name" />
+<col class="docinfo-content" />
+<tbody valign="top">
+<tr><th class="docinfo-name">Author:</th>
+<td>Didier Deshommes</td></tr>
+<tr><th class="docinfo-name">Date:</th>
+<td>2012-10-26</td></tr>
+</tbody>
+</table>
+<!-- Definitions of interpreted text roles (classes) for S5/HTML data. -->
+<!-- This data file has been placed in the public domain. -->
+<!-- Colours
+======= -->
+<!-- Text Sizes
+========== -->
+<!-- Display in Slides (Presentation Mode) Only
+========================================== -->
+<!-- Display in Outline Mode Only
+============================ -->
+<!-- Display in Print Only
+===================== -->
+<!-- Display in Handout Mode Only
+============================ -->
+<!-- Incremental Display
+=================== -->
+<!-- This document is copyright Didier Deshommes -->
+
+</div>
+<div class="slide" id="meta-information">
+<h1>Meta Information</h1>
+<dl class="docutils">
+<dt><strong>Me</strong>: Long-time Python user. Work at Parse.ly, a web analytics</dt>
+<dd>company for publishers. Early contributor to SAGE, Cython.</dd>
+</dl>
+<p><strong>E-mail me</strong>: <a class="reference external" href="mailto:didier&#64;parsely.com">didier&#64;parsely.com</a></p>
+</div>
+<div class="slide" id="what-this-talk-covers">
+<h1>What This Talk Covers</h1>
+<ul class="incremental simple">
+<li>using Wikipedia data and Solr for NLP tasks</li>
+<li>using Wikipedia traffic data to search for real-time trends</li>
+</ul>
+</div>
+<div class="slide" id="why-wikipedia">
+<h1>Why Wikipedia?</h1>
+<p>Wikipedia as a data source is very attractive:</p>
+<ul class="incremental simple">
+<li>the number of articles rivals traditional corpora</li>
+<li>the number of topics covered is broad</li>
+<li>the Wikimedia Foundation ensures this data is free and publicly
+accessible to everyone</li>
+</ul>
+</div>
+<div class="slide" id="finding-the-data">
+<h1>Finding the data</h1>
+<p>The Wikimedia Foundation project hosts dumps from all its projects at
+<a class="reference external" href="http://dumps.wikimedia.org/">http://dumps.wikimedia.org/</a></p>
+<p>Useful page for knowing where to download what:
+<a class="reference external" href="http://en.wikipedia.org/wiki/Wikipedia:Database_download">http://en.wikipedia.org/wiki/Wikipedia:Database_download</a></p>
+<p>Link to latest XML dump of Wikipedia:
+<a class="reference external" href="http://download.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2">http://download.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2</a></p>
+<p>The file is (predictably) huge, so use incremental parsing:
+<a class="reference external" href="http://effbot.org/zone/element-iterparse.htm">http://effbot.org/zone/element-iterparse.htm</a></p>
+</div>
+<div class="slide" id="data-peculiarities">
+<h1>Data peculiarities</h1>
+<p>Not all Wikipedia pages are created equal. We are not interested in</p>
+<ul class="incremental simple">
+<li>special pages: pages whose title starts with <tt class="docutils literal">Wikipedia:</tt> and
+are generally of an administrative nature</li>
+<li>categories pages</li>
+<li>stub pages: pages that do not exist yet</li>
+</ul>
+</div>
+<div class="slide" id="data-features-categories">
+<h1>Data features: categories</h1>
+<p>Wikipedia's category system is rich, the problem with them is that
+they can be too specific or too broad for inferring topics. Barack Obama's
+categories include :</p>
+<ul class="incremental simple">
+<li><tt class="docutils literal">Democratic Party United States Senators</tt> (too specific)</li>
+<li><tt class="docutils literal">Current national leaders</tt> (too broad)</li>
+</ul>
+</div>
+<div class="slide" id="data-features-links">
+<h1>Data features: links</h1>
+<p>Links to other pages in a Wikipedia page indicate a relationship
+between them.</p>
+<ul class="incremental simple">
+<li>early inhabitants of <em>Haiti</em> (<a class="reference external" href="http://en.wikipedia.org/wiki/Haiti">http://en.wikipedia.org/wiki/Haiti</a>)</li>
+<li>were <em>Taino</em> Indians  (<a class="reference external" href="http://en.wikipedia.org/wiki/Ta%C3%ADno_people">http://en.wikipedia.org/wiki/Ta%C3%ADno_people</a>)</li>
+<li>who were speakers of the <em>Arawakan</em> language (<a class="reference external" href="http://en.wikipedia.org/wiki/Arawakan">http://en.wikipedia.org/wiki/Arawakan</a>)</li>
+</ul>
+</div>
+<div class="slide" id="data-to-be-extracted-from-a-page">
+<h1>Data to be extracted from a page</h1>
+<blockquote>
+<ul class="simple">
+<li>page title</li>
+<li>links in the page</li>
+<li>categories the page belongs to</li>
+<li>page text</li>
+<li>redirects this page may have</li>
+</ul>
+</blockquote>
+</div>
+<div class="slide" id="what-are-redirects">
+<h1>What are redirects?</h1>
+<p>Redirects are pages that redirect to a 'canonical' page.</p>
+<dl class="docutils">
+<dt>These pages are the same:</dt>
+<dd><ul class="first last simple">
+<li><tt class="docutils literal">Barack_Obama</tt></li>
+<li><tt class="docutils literal">Barack_Hussein_Obama</tt> (redirect)</li>
+</ul>
+</dd>
+</dl>
+<p><a class="reference external" href="http://174.143.145.74/wikistats/demand/Barack_Obama">Barack Obama canonical page</a></p>
+<p><a class="reference external" href="http://174.143.145.74/wikistats/demand/Barack">One of Barack Obama's redirect pages</a></p>
+</div>
+<div class="slide" id="indexing-to-solr">
+<h1>Indexing to Solr</h1>
+<ul class="incremental simple">
+<li>we will index and store titles to the <tt class="docutils literal">title</tt> field</li>
+<li>we will index links to the multi-valued <tt class="docutils literal">links</tt> field</li>
+<li>we will index link anchors to the multi-valued <tt class="docutils literal">link_texts</tt> field</li>
+<li>we will index categories to the multi-valued <tt class="docutils literal">categories</tt> field</li>
+<li>we will index title and page text to the <tt class="docutils literal">text</tt> field</li>
+<li>we will index redirects to the <tt class="docutils literal">redirect</tt> field</li>
+<li><a class="reference external" href="http://174.143.144.61:8983/solr/wikipedia/select?q=id%3AJaguar&amp;fq=&amp;start=0&amp;rows=10&amp;wt=json">Example document</a></li>
+</ul>
+</div>
+<div class="slide" id="using-solr-and-wikipedia">
+<h1>Using Solr and Wikipedia</h1>
+</div>
+<div class="slide" id="disambiguation-jaguar-vs-jaguar">
+<h1>Disambiguation: Jaguar vs jaguar</h1>
+<p>Example: an article talking is talking about jaguars. Is the
+article about the car or the animal?</p>
+<ul class="incremental simple">
+<li><a class="reference external" href="http://en.wikipedia.org/wiki/Jaguar">http://en.wikipedia.org/wiki/Jaguar</a> has links to 'big cat',
+'feline', several other animals, several countries, 'sexual
+maturity', etc.</li>
+<li><a class="reference external" href="http://en.wikipedia.org/wiki/Jaguar_Cars">http://en.wikipedia.org/wiki/Jaguar_Cars</a> has links to 'Tata
+Motors', several other car companies, etc</li>
+</ul>
+</div>
+<div class="slide" id="disambiguation-algorithm">
+<h1>Disambiguation algorithm</h1>
+<p>From <a class="reference external" href="http://www.aaai.org/Papers/Workshops/2008/WS-08-15/WS08-15-004.pdf">Topic Indexing with Wikipedia</a></p>
+<p>Given an article T, we want to find some of its main topics.</p>
+<blockquote>
+<ul>
+<li><p class="first">Extract all word ngrams</p>
+</li>
+<li><p class="first">compute <strong>keyphraseness</strong> of each ngram: ratio of number of
+Wikipedia articles in which this ngram appears as a link and the
+number of articles in which it appears</p>
+</li>
+<li><p class="first">identify Wikipedia article corresponding to ngram</p>
+<blockquote>
+<ul class="simple">
+<li>if it's a direct match, we are done</li>
+<li>if the match is a disambiguation page, disambiguate it</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+</blockquote>
+</div>
+<div class="slide" id="handling-ambiguous-terms">
+<h1>Handling ambiguous terms</h1>
+<p>We use the direct, unambiguous ngrams that surround an ambigious ngram
+to disambiguate it. Each ambiguous ngram has several meanings, we
+will call them candidates. For each candidate:</p>
+<ul class="incremental simple">
+<li>compute its <em>similarity</em> to the other direct terms</li>
+<li>compute its <em>commonness</em>: the overall popularity of the candidate
+as an anchor</li>
+<li>Multiply both values to get an overall score for this candidate</li>
+<li>the candidate with the higest score is chosen</li>
+</ul>
+</div>
+<div class="slide" id="formulas">
+<h1>Formulas</h1>
+<img alt="sim.jpg" src="sim.jpg" />
+<img alt="score.jpg" src="score.jpg" />
+</div>
+<div class="slide" id="example">
+<h1>Example</h1>
+<p>&quot;You would have to be a millionaire to be able to buy a sports car like a Jaguar&quot;</p>
+<blockquote>
+<ul class="simple">
+<li>Ambiguous term is <tt class="docutils literal">Jaguar</tt>,</li>
+<li><tt class="docutils literal">millionaire</tt> and <tt class="docutils literal">sports car</tt> are unambiguous</li>
+</ul>
+</blockquote>
+</div>
+<div class="slide" id="similarity-score">
+<h1>Similarity score</h1>
+<div class="highlight"><pre><span class="n">wikipedia_similarity</span><span class="p">(</span><span class="s">&quot;Millionaire&quot;</span><span class="p">,</span><span class="s">&quot;Jaguar Cars&quot;</span><span class="p">)</span> <span class="o">=</span> <span class="mf">0.40296</span>
+<span class="n">wikipedia_similarity</span><span class="p">(</span><span class="s">&quot;Millionaire&quot;</span><span class="p">,</span><span class="s">&quot;Jaguar&quot;</span><span class="p">)</span> <span class="o">=</span> <span class="mf">0.4692</span>
+
+<span class="n">wikipedia_similarity</span><span class="p">(</span><span class="s">&quot;Sports car&quot;</span><span class="p">,</span><span class="s">&quot;Jaguar Cars&quot;</span><span class="p">)</span> <span class="o">=</span> <span class="mf">0.58767</span>
+<span class="n">wikipedia_similarity</span><span class="p">(</span><span class="s">&quot;Sports car&quot;</span><span class="p">,</span><span class="s">&quot;Jaguar&quot;</span><span class="p">)</span> <span class="o">=</span> <span class="mf">0.38630</span>
+</pre></div>
+</div>
+<div class="slide" id="commonnness">
+<h1>Commonnness</h1>
+<p>Jaguar appears as a link anchor in Wikipedia around 930 times.</p>
+<ul class="incremental simple">
+<li>it links to Jaguar cars 466 times. Its commonness is around 0.5</li>
+<li>it links to the animal around 203 times. Its commonness is
+around 0.2</li>
+</ul>
+</div>
+<div class="slide" id="scores">
+<h1>Scores</h1>
+<ul class="incremental simple">
+<li>Score for <tt class="docutils literal">Jaguar Cars</tt>: ((0.402 + 0.587)/2)* 0.5 = 0.2472</li>
+<li>Score for <tt class="docutils literal">Jaguar</tt>: ((0.4692 + 0.3863)/2)* 0.2 = 0.085</li>
+<li>So <tt class="docutils literal">Jaguar</tt> is correctly disambiguated as <tt class="docutils literal">Jaguar Cars</tt></li>
+</ul>
+</div>
+<div class="slide" id="avoiding-disambiguation-through-brute-force">
+<h1>Avoiding disambiguation through brute force</h1>
+<p>Brute-force algorithm:</p>
+<pre class="literal-block">
+for each sentence in text:
+    query wikipedia corpus, retain say, top 10 results
+out of these 10n results, select the most frequent ones
+</pre>
+</div>
+<div class="slide" id="avoiding-disambiguation-through-brute-force-2">
+<h1>Avoiding disambiguation through brute force(2)</h1>
+<p>2 ways to select the most frequent results/articles:</p>
+<blockquote>
+<ul class="simple">
+<li>taking the top <tt class="docutils literal">y</tt> articles (top 5, 10)</li>
+<li>taking the top <tt class="docutils literal">y%</tt> of articles (top 1%, 10% )</li>
+</ul>
+</blockquote>
+</div>
+<div class="slide" id="some-examples">
+<h1>Some examples</h1>
+<p>Top pages/topics for <a class="reference external" href="http://techcrunch.com/2011/08/25/yipits-daily-deal-report-groupon-up-livingsocial-down-travel-deals-take-off/">Yipit’s Daily Deal Report: Industry Revenue Dips, Groupon Gains Share, And Travel Deals Take Off</a></p>
+<ul class="incremental simple">
+<li>Group buying,</li>
+<li>Groupon,</li>
+<li>Andrew Mason (businessman),</li>
+<li>Groupon MyCityDeal,</li>
+<li>LivingSocial</li>
+</ul>
+</div>
+<div class="slide" id="some-examples-2">
+<h1>Some examples (2)</h1>
+<p>Top pages for <a class="reference external" href="http://gawker.com/5831538/we-dont-need-no-stinkin-apple-store">We Don’t Need No Stinkin’ Apple Store</a></p>
+<ul class="incremental simple">
+<li>Criticism of Apple Inc.</li>
+<li>Apple Inc.</li>
+<li>Apple Corps v Apple Computer</li>
+<li>More examples <a class="reference external" href="http://pastie.org/private/tnayfwf51zwxxfxbrujjw">here</a></li>
+</ul>
+</div>
+<div class="slide" id="drawbacks-and-work-arounds">
+<h1>Drawbacks and work-arounds:</h1>
+<blockquote>
+<ul class="simple">
+<li>The running time complexity depends on the number of
+sentences in the candidate text and the number of results to be retained</li>
+<li>We could submit 2 or more sentences at a time, which would cut
+on the number of queries but provide slightly less accurate results</li>
+<li>In some cases, top topics identified have nothing to do with the
+article</li>
+</ul>
+</blockquote>
+</div>
+<div class="slide" id="using-solr-s-morelikethis-feature">
+<h1>Using Solr's MoreLikeThis feature</h1>
+<p>Constructs a Lucene query based on terms within a document</p>
+<ul class="incremental simple">
+<li>Very similar to the previous algorithm</li>
+<li>Have to somehow be &quot;lucky&quot;, all results depend on results from
+the first match</li>
+</ul>
+</div>
+<div class="slide" id="example-of-mlt-in-action">
+<h1>Example of MLT in action</h1>
+<p>Top topics for <a class="reference external" href="http://www.plenglish.com/index.php?option=com_content&amp;task=view&amp;id=644001&amp;Itemid=1">Haiti Challenges UN for Cholera Pandemic</a></p>
+<ul class="incremental simple">
+<li>United Nations Stabilisation Mission in Haiti</li>
+<li>Stabilisation Unit</li>
+<li>Evangelical Baptist Mission of South Haiti</li>
+</ul>
+</div>
+<div class="slide" id="related-pages-topics">
+<h1>Related pages/topics</h1>
+<p>Pages that link to each other are related, but we can quantify how
+closely they are related?</p>
+<ul class="incremental simple">
+<li><tt class="docutils literal">Barack Obama</tt> page links to <tt class="docutils literal">United States of America</tt> and
+<tt class="docutils literal">Patient Protection and Affordable Care Act</tt></li>
+<li>But <tt class="docutils literal">United States of America</tt> has more pages linking to it
+because it's such a general term</li>
+<li>So <tt class="docutils literal">Patient Protection and Affordable Care Act</tt> is more closely
+related to <tt class="docutils literal">Barack Obama</tt></li>
+</ul>
+</div>
+<div class="slide" id="recap">
+<h1>Recap</h1>
+<ul class="incremental simple">
+<li>Wikipedia's data is a treasure trove of good data</li>
+<li>Solr can be used to do some 'traditional' NLP tasks like entity
+recognition, finding an article's main topics</li>
+</ul>
+</div>
+<div class="slide" id="wikipedia-traffic-data">
+<h1>Wikipedia traffic data</h1>
+</div>
+<div class="slide" id="indexing-wikipedia-traffic-data">
+<h1>Indexing Wikipedia traffic data</h1>
+<p>Contains page view statistics from Wikipedia pages accessed: <a class="reference external" href="http://dumps.wikimedia.org/other/pagecounts-raw/">http://dumps.wikimedia.org/other/pagecounts-raw/</a></p>
+<p>Useful for determining real-time trends on the web.</p>
+<p>Updated every hour.</p>
+</div>
+<div class="slide" id="parsing-traffic-data">
+<h1>Parsing traffic data</h1>
+<p>Pages are stored in a predictable way, broken down by hour.</p>
+<dl class="docutils">
+<dt>Line format:</dt>
+<dd><ul class="first last simple">
+<li>project name</li>
+<li>page title</li>
+<li>number of requests to page</li>
+<li>page size</li>
+</ul>
+</dd>
+</dl>
+<p>Example entry: <tt class="docutils literal">fr.b Special:Recherche/Achille_Baraguey_d%5C%27Hilliers 1 624</tt></p>
+</div>
+<div class="slide" id="saving-traffic-data">
+<h1>Saving traffic data</h1>
+<p>We are not interested in every page, just pages that display Wikipedia
+articles (including redirects). we will exclude the following pages
+that start with these strings:</p>
+<div class="highlight"><pre><span class="nb">set</span><span class="p">([</span><span class="s">&quot;Special:&quot;</span><span class="p">,</span> <span class="s">&quot;Wiktionary:&quot;</span><span class="p">,</span> <span class="s">&quot;Category:&quot;</span><span class="p">,</span>
+     <span class="s">&quot;Wikinews:&quot;</span><span class="p">,</span> <span class="s">&quot;Subject:&quot;</span><span class="p">,</span><span class="s">&quot;Mediawiki:&quot;</span><span class="p">,</span>
+     <span class="s">&quot;File:&quot;</span><span class="p">,</span><span class="s">&quot;Wikiversity:&quot;</span><span class="p">,</span> <span class="s">&quot;Topic:&quot;</span><span class="p">,</span> <span class="s">&quot;User_talk:&quot;</span><span class="p">,</span>
+     <span class="s">&quot;Appendix:&quot;</span><span class="p">,</span><span class="s">&quot;Wikibooks:&quot;</span><span class="p">,</span><span class="s">&quot;Wikijunior:&quot;</span><span class="p">,</span>
+     <span class="s">&quot;Portal:&quot;</span><span class="p">,</span> <span class="s">&quot;Data:&quot;</span><span class="p">,</span> <span class="s">&quot;Wikipedia:&quot;</span><span class="p">,</span> <span class="s">&quot;Wikiquote:&quot;</span><span class="p">,</span>
+     <span class="s">&quot;&gt;&quot;</span><span class="p">,</span><span class="s">&quot;&lt;&quot;</span><span class="p">,</span><span class="s">&quot;Wikt:&quot;</span><span class="p">,</span><span class="s">&quot;Wikisource:&quot;</span><span class="p">,</span><span class="s">&quot;Wikipedia_Talk:&quot;</span><span class="p">,</span>
+     <span class="s">&quot;Help:&quot;</span><span class="p">,</span><span class="s">&quot;]&quot;</span><span class="p">,</span><span class="s">&quot;[&quot;</span><span class="p">,</span><span class="s">&quot;Mediawiki_Talk:&quot;</span><span class="p">,</span><span class="s">&quot;Talk:&quot;</span><span class="p">,</span><span class="s">&quot;Image:&quot;</span><span class="p">,</span>
+     <span class="s">&quot;jquery&quot;</span><span class="p">,</span><span class="s">&quot;Main_Page&quot;</span><span class="p">,</span><span class="s">&quot;404_error&quot;</span><span class="p">,</span><span class="s">&quot;index.html&quot;</span><span class="p">,</span><span class="s">&quot;.css(&quot;</span><span class="p">,</span>
+     <span class="s">&quot;this.elem&quot;</span><span class="p">,</span><span class="s">&quot;User:&quot;</span><span class="p">,</span><span class="s">&quot;Template:&quot;</span>
+     <span class="p">])</span>
+</pre></div>
+<p>We also exclude pages that have more than 1 slash (<tt class="docutils literal">/</tt>) in them
+and pages that have very low page views (say, less than 5 views)</p>
+</div>
+<div class="slide" id="what-about-redirects">
+<h1>What about redirects?</h1>
+<p><tt class="docutils literal">Barack_Hussein_Obama</tt> and <tt class="docutils literal">Barack_Obama</tt> will not have the same
+number of page hits, even though they will refer to the same page.</p>
+<p>The best solution to this is to sum up all the hits from redirect
+pages for a canonical page.</p>
+</div>
+<div class="slide" id="knowing-when-a-traffic-spike-occurs">
+<h1>Knowing when a traffic spike occurs</h1>
+<p>We need to know the <em>total</em> number of page views occur for a period of
+time</p>
+<p>Wikipedia has this data stored in their project-level counts</p>
+<p>Can be found with traffic data, also broken down by hour.</p>
+<dl class="docutils">
+<dt>Line format:</dt>
+<dd><ul class="first last simple">
+<li>Project name; generally indicates languages (en, fr, etc)</li>
+<li>total page views for period</li>
+<li>total bytes transfered for period</li>
+</ul>
+</dd>
+</dl>
+<p>Example line: <tt class="docutils literal">en - 8758112 248450166157</tt></p>
+</div>
+<div class="slide" id="traffic-spikes-uses">
+<h1>Traffic spikes uses</h1>
+<p>With this, we can determine whether the traffic to a page has really
+spiked beyond some baseline (ie, weekend, vs Monday traffic)</p>
+<p>We can also determine which page has seen the most increase in page
+views <em>in percentage</em>. For example:</p>
+<blockquote>
+<ul class="simple">
+<li>page <tt class="docutils literal">A</tt> normally has 100 view, but gets 200 views</li>
+<li>page <tt class="docutils literal">B</tt> normally has 1000 views, but gets 1200 views</li>
+</ul>
+</blockquote>
+<p>The spike to page <tt class="docutils literal">A</tt> is more interesting because the change in
+percentage is greater for it</p>
+</div>
+<div class="slide" id="a-traffic-spike-example-and-validation">
+<h1>A traffic spike example (and validation)</h1>
+<p>Consider the presidential debate that took place on 2012/10/03. Most
+people think Romney &quot;won&quot; that debate. Could that be reflected in the
+number of pages accessed in Wikipedia?</p>
+<ul class="incremental simple">
+<li>On 2012/10/03, <tt class="docutils literal">Barack_Obama</tt> got around 100K views</li>
+<li>On 2012/10/04, <tt class="docutils literal">Barack_Obama</tt>  tripled to around 300K views</li>
+<li>On 2012/10/03, <tt class="docutils literal">Mitt_Romney</tt> got around 150K views</li>
+<li>On 2012/10/04, <tt class="docutils literal">Mitt_Romney</tt>  quintupled to around 800K views</li>
+<li>Reflects both the public's renewed interest in both candidates and
+the consensus that Mitt Romney &quot;won&quot; that debate</li>
+</ul>
+</div>
+<div class="slide" id="wikipedia-efforts">
+<h1>Wikipedia efforts</h1>
+<p>The Wikimedia Foundation itself has started building analytics tools
+for viewing this information at
+<a class="reference external" href="http://www.mediawiki.org/wiki/Analytics">http://www.mediawiki.org/wiki/Analytics</a></p>
+<p>Contains:</p>
+<ul class="incremental simple">
+<li>a framework for processing data called Kraken:
+<a class="reference external" href="http://www.mediawiki.org/wiki/Analytics/Kraken">http://www.mediawiki.org/wiki/Analytics/Kraken</a></li>
+<li>a GUI toolking for doing custom visualizations, Limn:
+<a class="reference external" href="http://www.mediawiki.org/wiki/Analytics/Limn">http://www.mediawiki.org/wiki/Analytics/Limn</a></li>
+</ul>
+</div>
+<div class="slide" id="id1">
+<h1>Recap</h1>
+<ul class="incremental">
+<li><p class="first">Wikipedia's data is a treasure trove of good data</p>
+</li>
+<li><p class="first">Solr can be used to do some 'traditional' NLP tasks like entity
+recognition, finding an article's main topics</p>
+</li>
+<li><dl class="first docutils">
+<dt>Wikipedia traffic data can be used to determine real-time trends</dt>
+<dd><p class="first last">on the web</p>
+</dd>
+</dl>
+</li>
+</ul>
+<!-- wkistats.co -->
+</div>
+</div>
+</body>
+</html>
