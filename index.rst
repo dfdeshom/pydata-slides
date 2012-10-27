@@ -13,7 +13,7 @@ Meta Information
 ----------------
 
 **Me**: Long-time Python user. Work at Parse.ly, a web analytics
-  company for publishers. Early contributor to SAGE, Cython.
+  company for publishers.
 
 **E-mail me**: didier@parsely.com
 
