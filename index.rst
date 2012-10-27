@@ -50,6 +50,20 @@ http://download.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2
 The file is (predictably) huge, so use incremental parsing:
 http://effbot.org/zone/element-iterparse.htm
 
+Wikipedia efforts
+---------------------
+The Wikimedia Foundation itself has started building analytics tools
+for viewing this information at
+http://www.mediawiki.org/wiki/Analytics
+
+Contains:
+
+.. class:: incremental
+
+    * a framework for processing data called Kraken:
+      http://www.mediawiki.org/wiki/Analytics/Kraken
+    * a GUI toolking for doing custom visualizations, Limn:
+      http://www.mediawiki.org/wiki/Analytics/Limn
 
 Data peculiarities
 ----------------------------------
@@ -410,21 +424,6 @@ number of pages accessed in Wikipedia?
     * Reflects both the public's renewed interest in both candidates and
       the consensus that Mitt Romney "won" that debate 
 
-Wikipedia efforts
----------------------
-The Wikimedia Foundation itself has started building analytics tools
-for viewing this information at
-http://www.mediawiki.org/wiki/Analytics
-
-Contains:
-
-.. class:: incremental
-
-    * a framework for processing data called Kraken:
-      http://www.mediawiki.org/wiki/Analytics/Kraken
-    * a GUI toolking for doing custom visualizations, Limn:
-      http://www.mediawiki.org/wiki/Analytics/Limn
-
 Recap
 -----------------------------
 .. class:: incremental
@@ -433,8 +432,5 @@ Recap
    * Solr can be used to do some 'traditional' NLP tasks like entity
      recognition, finding an article's main topics
    * Wikipedia traffic data can be used to determine real-time trends
-      on the web
-      
-      
-
-.. wkistats.co
+     on the web
+     
