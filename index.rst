@@ -119,10 +119,6 @@ These pages are the same:
     * ``Barack_Obama``
     * ``Barack_Hussein_Obama`` (redirect)
 
-`Barack Obama canonical page <http://174.143.145.74/wikistats/demand/Barack_Obama>`_
-
-
-`One of Barack Obama's redirect pages  <http://174.143.145.74/wikistats/demand/Barack>`_
 
 Indexing to Solr
 --------------------------------
@@ -243,7 +239,7 @@ Avoiding disambiguation through brute force(2)
 
 Some examples
 ------------------------------------------------
-Top pages/topics for `Yipit’s Daily Deal Report: Industry Revenue Dips, Groupon Gains Share, And Travel Deals Take Off <http://techcrunch.com/2011/08/25/yipits-daily-deal-report-groupon-up-livingsocial-down-travel-deals-take-off/>`_
+Top pages/topics for Techcrunch article `Yipit’s Daily Deal Report: Industry Revenue Dips, Groupon Gains Share, And Travel Deals Take Off <http://techcrunch.com/2011/08/25/yipits-daily-deal-report-groupon-up-livingsocial-down-travel-deals-take-off/>`_
 
 .. class:: incremental
 
@@ -255,7 +251,7 @@ Top pages/topics for `Yipit’s Daily Deal Report: Industry Revenue Dips, Groupo
  
 Some examples (2)
 ---------------------
-Top pages for `We Don’t Need No Stinkin’ Apple Store <http://gawker.com/5831538/we-dont-need-no-stinkin-apple-store>`_
+Top pages for `We Don’t Need No Stinkin’ Apple Store <http://gawker.com/5831538/we-dont-need-no-stinkin-apple-store>`_ (from Gawker)
 
 .. class:: incremental
 
@@ -378,6 +374,11 @@ number of page hits, even though they will refer to the same page.
 The best solution to this is to sum up all the hits from redirect
 pages for a canonical page. 
 
+`Hits for Barack Obama canonical page <http://174.143.145.74/wikistats/demand/Barack_Obama>`_
+
+
+`Hits for one of Barack Obama's redirect pages  <http://174.143.145.74/wikistats/demand/Barack>`_
+
 Knowing when a traffic spike occurs 
 ----------------------------------------
 We need to know the *total* number of page views occur for a period of
@@ -424,7 +425,7 @@ number of pages accessed in Wikipedia?
     * Reflects both the public's renewed interest in both candidates and
       the consensus that Mitt Romney "won" that debate 
 
-Recap
+Conclusion
 -----------------------------
 .. class:: incremental
 
